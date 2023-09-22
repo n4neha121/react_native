@@ -2,84 +2,83 @@ import React, {useState} from 'react';
 import {View, Text, TextInput, Button, StyleSheet, Alert} from 'react-native';
 import axios from 'axios';
 
-const SignupForm = () => {
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    emailAddress: '',
-    userName: '',
-    password: '', //all the input fields are declared here with blank input fields
-  });
+const SignupForm = ({navigation}) => {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [EmailAddress, setEmailAddress] = useState('');
+  const [userName, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
-  const [responseMessage, setResponseMessage] = useState(''); //response message what if everything will be okk the response will be okk otherwise it will show error
-
-  const Submit = () => {
-    // Validation: Check if all fields are filled
-    for (const key in formData) {
-      if (formData[key] === '') {
-        Alert.alert('Validation Error', 'Please fill in all fields');
-        return; //all the key data is asked here if any space will be present then alert will be shown
-      }
+  const handleSignup = () => {
+    if (!firstName || !lastName || !EmailAddress || !userName || !password) {
+      Alert.alert('Please fill in all input fields.');
+      return;
     }
 
-    // Make an Axios POST request to your API
+    // Simulate a POST request using Axios (replace with your actual API endpoint)
     axios
-      .post('http://localhost:3300/user/signUp', formData)
-      .then(response => {
-        // Handle successful API response
-        const responseData = response.data;
-        setResponseMessage(`Signup successful. Response: ${responseData}`);
+      .post('your-backend-api-url/signup', {
+        firstName: firstName,
+        lastName: lastName,
+        EmailAddress: EmailAddress, // Use the correct field name expected by your server
+        userName: userName,
+        password: password,
       })
-      .catch(error => {
-        // Handle error
-        const errorMessage = error.message || 'Signup failed';
-        Alert.alert('Error', errorMessage);
-        console.error(errorMessage, error);
-        setResponseMessage('');
+      .then(function (response) {
+        if (response.status >= 200 && response.status <= 299) {
+          // Handle success
+          navigation.navigate('Signin');
+        } else {
+          // Handle other success cases or errors based on your API response.
+          console.error('Unexpected response status:', response.status);
+        }
+      })
+      .catch(function (error) {
+        console.error(error);
+        Alert.alert('Signup failed. Please try again.');
       });
   };
 
   return (
     <View style={styles.container}>
-      <Text style={{color: 'black', fontSize: 45, fontStyle: 'italic'}}>
-        Sign Up
-      </Text>
-      <View style={styles.form}>
-        <Text style={styles.label}>First Name</Text>
+      <Text style={styles.title}>Signup</Text>
+      <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
-          onChangeText={text => setFormData({...formData, firstName: text})}
+          placeholder="First Name"
+          onChangeText={text => setFirstName(text)}
         />
-
-        <Text style={styles.label}>Last Name</Text>
-        <TextInput
-          style={styles.input}
-          onChangeText={text => setFormData({...formData, lastName: text})}
-        />
-
-        <Text style={styles.label}>Email Address</Text>
-        <TextInput
-          style={styles.input}
-          onChangeText={text => setFormData({...formData, emailAddress: text})}
-          keyboardType="email-address"
-        />
-
-        <Text style={styles.label}>Username</Text>
-        <TextInput
-          style={styles.input}
-          onChangeText={text => setFormData({...formData, userName: text})}
-        />
-
-        <Text style={styles.label}>Password</Text>
-        <TextInput
-          style={styles.input}
-          onChangeText={text => setFormData({...formData, password: text})}
-          secureTextEntry
-        />
-
-        <Button title="Sign Up" onPress={Submit} />
-        <Text style={styles.responseMessage}>{responseMessage}</Text>
       </View>
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Last Name"
+          onChangeText={text => setLastName(text)}
+        />
+      </View>
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Email Address"
+          onChangeText={text => setEmailAddress(text)}
+        />
+      </View>
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Username"
+          onChangeText={text => setUsername(text)}
+        />
+      </View>
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          secureTextEntry={true}
+          onChangeText={text => setPassword(text)}
+        />
+      </View>
+      <Button title="Sign Up" onPress={handleSignup} color="black" />
     </View>
   );
 };
@@ -87,35 +86,28 @@ const SignupForm = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'lightyellow',
     justifyContent: 'center',
-    padding: 16,
+    alignItems: 'center',
+    backgroundColor: 'white', // Background color of the entire screen
   },
-  form: {
-    backgroundColor: 'white',
-    padding: 16,
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: 'black',
-  },
-  label: {
+  title: {
+    fontSize: 24,
     fontWeight: 'bold',
+    marginBottom: 20,
+    color: 'black', // Text color
+  },
+  inputContainer: {
+    backgroundColor: 'white', // Background color of the input container
+    marginBottom: 10,
+    borderRadius: 5,
+    borderColor: 'black', // Border color
+    borderWidth: 1,
     color: 'black',
-    marginBottom: 4,
   },
   input: {
-    borderWidth: 1,
-    borderColor: 'black',
-    borderRadius: 5,
-    padding: 8,
-    marginBottom: 16,
-    color: '#000',
-    zIndex: 9,
-  },
-  responseMessage: {
-    color: 'green',
-    textAlign: 'center',
-    marginTop: 10,
+    color: 'black', // Text color in the input field
+    padding: 10,
+    width: 250,
   },
 });
 

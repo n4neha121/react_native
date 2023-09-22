@@ -1,39 +1,24 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-import axios from 'axios';
 
-const ProfileScreen = ({route}) => {
+const Profile = ({route, navigation}) => {
+  // Assuming you pass the username as a route parameter when navigating to this screen
   const {userName} = route.params;
-  const [userData, setUserData] = useState({});
-  const [loading, setLoading] = useState(true);
+  navigation.navigate('product');
 
-  useEffect(() => {
-    // Replace 'YOUR_API_ENDPOINT' with the actual endpoint to fetch user data
-    axios
-      .get('http://localhost:3300/user/profile')
-      .then(response => {
-        setUserData(response.data);
-        setLoading(false);
-      })
-      .catch(error => {
-        console.error('API Error:', error);
-        setLoading(false);
-      });
-  }, []);
+  // Function to get the first letter of the username for the logo
+  const getFirstLetter = name => {
+    return name.charAt(0).toUpperCase();
+  };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Username:</Text>
-      <Text style={styles.username}>{userName}</Text>
-
-      {loading ? (
-        <Text>Loading...</Text>
-      ) : (
-        <View>
-          <Text style={styles.label}>User Data:</Text>
-          <Text>{JSON.stringify(userData, null, 2)}</Text>
+      <View style={styles.logoContainer}>
+        <View style={styles.logo}>
+          <Text style={styles.logoText}>{getFirstLetter(userName)}</Text>
         </View>
-      )}
+      </View>
+      <Text style={styles.username}>{userName}</Text>
     </View>
   );
 };
@@ -41,20 +26,34 @@ const ProfileScreen = ({route}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'lightyellow',
-    padding: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  label: {
-    fontWeight: 'bold',
-    color: 'black',
-    marginBottom: 4,
+  logoContainer: {
+    width: 120,
+    height: 120,
+    backgroundColor: 'lightgray',
+    borderRadius: 60,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  logo: {
+    width: 100,
+    height: 100,
+    backgroundColor: 'gray',
+    borderRadius: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  logoText: {
+    fontSize: 40,
+    color: 'white',
   },
   username: {
-    fontSize: 18,
+    marginTop: 20,
+    fontSize: 24,
     fontWeight: 'bold',
-    color: 'black',
-    marginBottom: 16,
   },
 });
 
-export default ProfileScreen;
+export default Profile;

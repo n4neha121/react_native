@@ -1,88 +1,106 @@
-import React, {useState} from 'react';
-import {View, Text, TextInput, Button, StyleSheet} from 'react-native';
+//Signin
+import React, {useContext, useState} from 'react';
+import {View, Text, TextInput, Button, StyleSheet, Alert} from 'react-native';
 import axios from 'axios';
 
-const SigninScreen = navigation => {
+import {UserContext} from './UserContext';
+
+function SigninScreen({route, navigation}) {
+  const [userName, setUsername] = useState('');
   const [EmailAddress, setEmailAddress] = useState('');
-  const [userName, setUserName] = useState('');
-  const [validationError, setValidationError] = useState('');
+  const [password, setPassword] = useState('');
+  const {signupData} = route.params;
+  const userContext = useContext(UserContext);
 
-  const handleSignIn = async () => {
-    if (!EmailAddress || !userName) {
-      setValidationError('Please fill in both email and username fields');
-    } else {
-      try {
-        const response = await axios.post('http://localhost:3300/user/signIn', {
-          EmailAddress,
-          userName,
-        });
-
-        if (response.data.isValid) {
-          setValidationError('');
-          navigation.navigate('Profile', {userName});
-        } else {
-          setValidationError('Email and username do not match our records');
-        }
-      } catch (error) {
-        console.error('API Error:', error);
-        setValidationError('An error occurred during sign-in');
+  const handleLogin = () => {
+    if (
+      EmailAddress === EmailAddress &&
+      userName === userName &&
+      password === password
+    )
+      if (!EmailAddress || !userName || !password) {
+        Alert.alert('Please fill in all input fields.');
+        return;
       }
-    }
+    userContext.setUser(signupData);
+
+    // Simulate a POST request using Axios
+    axios
+      .post('your-backend-api-url/signup', {
+        EmailAddress: EmailAddress, // Use the correct field name expected by your server
+        userName: userName,
+        password: password,
+      })
+      .then(function (response) {
+        if (response.status >= 200 && response.status <= 299) {
+          // Handle success
+          navigation.navigate('profile');
+        } else {
+          // Handle other success cases or errors based on your API response.
+          console.error('Unexpected response status:', response.status);
+        }
+      })
+      .catch(function (error) {
+        console.error(error);
+        Alert.alert('Signup failed. Please try again.');
+      });
   };
 
   return (
     <View style={styles.container}>
-      <Text style={{color: 'blue', textAlign: 'center', fontSize: 45}}>
-        Sign In
-      </Text>
-      <Text style={styles.label}>Email Address</Text>
-      <TextInput
-        style={styles.input}
-        onChangeText={text => setEmailAddress(text)}
-        value={EmailAddress}
-        keyboardType="email-address"
-        placeholderTextColor="Blue"
-      />
-
-      <Text style={styles.label}>Username</Text>
-      <TextInput
-        style={styles.input}
-        onChangeText={text => setUserName(text)}
-        value={userName}
-        placeholderTextColor="Blue"
-      />
-
-      {validationError ? (
-        <Text style={styles.errorText}>{validationError}</Text>
-      ) : null}
-
-      <Button title="Sign In" onPress={handleSignIn} />
+      <Text style={styles.title}>Login</Text>
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Email Address"
+          onChangeText={text => setEmailAddress(text)}
+        />
+      </View>
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          secureTextEntry={true}
+          onChangeText={text => setPassword(text)}
+        />
+      </View>
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          secureTextEntry={true}
+          onChangeText={text => setUsername(text)}
+        />
+      </View>
+      <Button title="Login" onPress={handleLogin} color="black" />
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'lightyellow',
     justifyContent: 'center',
-    padding: 16,
+    alignItems: 'center',
+    backgroundColor: 'white', // Background color of the entire screen
   },
-  label: {
+  title: {
+    fontSize: 24,
     fontWeight: 'bold',
-    color: 'black',
-    marginBottom: 4,
+    marginBottom: 20,
+    color: 'black', // Text color
+  },
+  inputContainer: {
+    backgroundColor: 'white', // Background color of the input container
+    marginBottom: 10,
+    borderRadius: 5,
+    borderColor: 'black', // Border color
+    borderWidth: 1,
   },
   input: {
-    borderWidth: 1,
-    borderColor: 'black',
-    borderRadius: 5,
-    padding: 8,
-    marginBottom: 16,
-  },
-  errorText: {
-    color: 'red',
-    marginBottom: 16,
+    color: 'black', // Text color in the input field
+    padding: 10,
+    width: 250,
   },
 });
 
