@@ -16,12 +16,9 @@ import Contactus from './Newtemplate/Contactus';
 import Country from './Newtemplate/Country';
 import MyFavouites from './Newtemplate/favourites';
 import Addads from './Newtemplate/Add.';
-import Maps from './map/map1';
-import Mapdata from './map/dragpol';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
-const HomeStack = createNativeStackNavigator();
 
 function DrawerNavigator() {
   return (
@@ -37,27 +34,15 @@ function DrawerNavigator() {
       <Drawer.Screen name="Recent Adds" component={RecentAdds} />
       <Drawer.Screen name="categories" component={Categories} />
       <Drawer.Screen name="search" component={Search} />
-      <Drawer.Screen name="My ads" component={Myads} />
-      <Drawer.Screen name="My Favorites" component={MyFavouites} />
-      <Drawer.Screen name="Add ads" component={Addads} />
-      <Drawer.Screen name="profile" component={Profile} />
-      <Drawer.Screen name="Language" component={Language} />
-      <Drawer.Screen name="My chats" component={Mychats} />
-      <Drawer.Screen name="Contactus" component={Contactus} />
-      <Drawer.Screen name="Country" component={Country} />
+      <Stack.Screen name="My ads" component={Myads} />
+      <Stack.Screen name="My Favorites" component={MyFavouites} />
+      <Stack.Screen name="Add ads" component={Addads} />
+      <Stack.Screen name="profile" component={Profile} />
+      <Stack.Screen name="Language" component={Language} />
+      <Stack.Screen name="My chats" component={Mychats} />
+      <Stack.Screen name="Contactus" component={Contactus} />
+      <Stack.Screen name="Country" component={Country} />
     </Drawer.Navigator>
-  );
-}
-
-function HomeScreenStack() {
-  return (
-    <HomeStack.Navigator
-      initialRouteName="Map"
-      screenOptions={{headerShown: false}}>
-      <HomeStack.Screen name="Map" component={Maps} />
-      <HomeStack.Screen name="Map2" component={Mapdata} />
-      <HomeStack.Screen name="HomePage" component={HomePage} />
-    </HomeStack.Navigator>
   );
 }
 
@@ -68,7 +53,7 @@ function App() {
         initialRouteName="First"
         screenOptions={{headerShown: false}}>
         <Stack.Screen name="First" component={PhoneTemplate} />
-        <Stack.Screen name="Home" component={HomeScreenStack} />
+        <Stack.Screen name="Home" component={HomePage} />
         <Stack.Screen name="Drawer" component={DrawerNavigator} />
       </Stack.Navigator>
     </NavigationContainer>
