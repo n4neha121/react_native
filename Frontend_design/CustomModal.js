@@ -262,3 +262,4 @@ const styles = StyleSheet.create({
 });
 
 export default ModalComponent;
+<Image source={food.image} />;
