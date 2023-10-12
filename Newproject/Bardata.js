@@ -76,7 +76,7 @@ const BarData = () => {
       ],
     },
     {
-      subject: 'EnviromentalScience',
+      subject: 'Physics',
       data: [
         {Numberofquestionsattempt: 15, percentage: 20},
         {Numberofquestionsattempt: 20, percentage: 40},
@@ -90,7 +90,7 @@ const BarData = () => {
       ],
     },
     {
-      subject: 'InformationTechnology',
+      subject: 'Information Technology',
       data: [
         {Numberofquestionsattempt: 15, percentage: 20},
         {Numberofquestionsattempt: 20, percentage: 40},

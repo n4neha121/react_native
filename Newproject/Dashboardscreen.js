@@ -4,32 +4,34 @@ import {
   View,
   Text,
   Image,
-  ImageBackground,
   FlatList,
+  ScrollView,
 } from 'react-native';
 import {PieChart} from 'react-native-gifted-charts';
 import {BarChart} from 'react-native-gifted-charts';
 
 const DashboardScreen = () => {
   const SubjectPerformance = [
-    {label: 'Biology', value: 30, color: 'red'},
+    {label: 'Biology', value: 50, color: '#2a05e6'},
     {label: 'Chemistry', value: 40, color: 'lightblue'},
-    {label: 'Physics', value: 66, color: 'green'},
-    {label: 'Maths', value: 78, color: '#f5e342'},
-    {label: 'English', value: 87, color: '#b342f5'},
-    {label: 'Computer', value: 60, color: '#f542a7'},
-    {label: 'SocialScience', value: 70, color: '#66f542'},
-    {label: 'EnvironmentalScience', value: 92, color: '#42c8f5'},
   ];
-  const barData = [
-    {value: 15, percentage: 20},
-    {value: 15, percentage: 20},
-    {value: 15, percentage: 20},
-    {value: 15, percentage: 20},
-    {value: 15, percentage: 20},
-    {value: 15, percentage: 20},
-    {value: 15, percentage: 20},
+  [
+    {label: 'Maths', value: 50, color: 'lightgreen'},
+    {label: 'english', value: 40, color: 'lightblue'},
   ];
+  [
+    {label: 'Physics', value: 50, color: 'red'},
+    {label: 'Sanskrit', value: 40, color: 'lightblue'},
+  ];
+  [
+    {label: 'socialscience', value: 50, color: 'blue'},
+    {label: 'Computer', value: 40, color: 'lightblue'},
+  ];
+
+  // Create an array to hold all the arrays
+
+  // You can access the individual arrays within allArrays like this:
+
   const subjectColors = [
     '#f5429b', // Color for Biology
     '#f5ef42', // Color for Physics
@@ -91,12 +93,22 @@ const DashboardScreen = () => {
     },
   ];
 
+  const barData = [
+    {value: 6, label: 20, subject: 'Chemistry'},
+    {value: 4, label: 55, subject: 'Physics'},
+    {value: 8, label: 80, subject: 'Biology'},
+    {value: 12, label: 40, subject: 'English'},
+    {value: 20, label: 33, subject: 'Maths'},
+    {value: 18, label: 70, subject: 'Sanskrit'},
+    {value: 10, label: 22, subject: 'Computer'},
+  ];
+
   // eslint-disable-next-line react/no-unstable-nested-components
   const SubjectData = ({detail}) => {
     const backgroundColor = detail.color;
     const borderRadius = 10;
-    const height = 140;
-    const width = 165;
+    const height = 130;
+    const width = 145;
     return (
       <View
         // eslint-disable-next-line react-native/no-inline-styles
@@ -145,108 +157,148 @@ const DashboardScreen = () => {
       <PieChart
         donut
         data={SubjectPerformance}
-        innerRadius={80}
-        style={style.piedata}
+        innerRadius={30}
+        style={style.PieData}
+        radius={40}
+        centerLabelComponent={() => {
+          return <Text style={style.labeldata}>{item.value}%</Text>;
+        }}
       />
-      <Text style={style.labeldata}>{item.value}%</Text>
       <Text style={style.secdata}>{item.label}</Text>
     </View>
   );
   const renderItem2 = ({item}) => (
-    <View>
-      <BarChart
-        barWidth={20}
-        barBorderRadius={4}
-        frontColor="#177AD5"
-        data={barData}
-        yAxisThickness={1}
-        xAxisThickness={1}
-      />
-    </View>
-  );
-  return (
-    <ImageBackground
-      source={require('./assets/image.jpeg')}
-      style={style.backgroundImage}>
-      <View
-        style={{
-          justifyContent: 'space-between',
-          flexDirection: 'row',
-          marginTop: 32,
-        }}>
-        <Text style={{color: '#fff', fontSize: 28, paddingHorizontal: 18}}>
-          Hello,
-        </Text>
-        <View style={{marginRight: 22}}>
-          <Image
-            source={require('./assets/profile.jpeg')}
-            style={style.image}
-          />
-        </View>
-      </View>
-      <Text style={{color: '#fff', fontSize: 20, paddingHorizontal: 18}}>
-        Good morning
-      </Text>
-      <View style={style.secondContainer}>
+    <View style={style.barChartContainer}>
+      <View>
         <Text
           style={{
             color: '#000',
-            fontSize: 20,
-            fontWeight: '600',
-            paddingTop: 15,
-            paddingLeft: 15,
+            fontSize: 18,
+            paddingLeft: 10,
           }}>
-          Your Performance
+          {item.subject}
         </Text>
-        <Text style={{color: '#000', fontSize: 16, paddingLeft: 15}}>
-          Total number of sessions given: 8
-        </Text>
-        <FlatList
-          data={SubjectPerformance}
-          renderItem={renderItem}
-          keyExtractor={item => item.label}
-          horizontal
+      </View>
+      <BarChart
+        barWidth={14}
+        barBorderRadius={4}
+        frontColor="#0588e6"
+        data={barData}
+        yAxisThickness={1}
+        xAxisThickness={1}
+        showYAxisIndices={false}
+        showXAxisIndices={false}
+        style={{flex: 1, width: '100%'}}
+      />
+    </View>
+  );
+
+  return (
+    <ScrollView>
+      <View style={{backgroundColor: '#fff', flex: 1}}>
+        <Image
+          source={require('./assets/frame.png')}
+          style={style.backgroundImage}
         />
-      </View>
-      <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-        <Text
+        <View
           style={{
-            color: 'black',
-            fontSize: 24,
-            fontWeight: '500',
-            paddingTop: 10,
+            justifyContent: 'space-between',
+            flexDirection: 'row',
+            marginTop: 18,
+            Top: 100,
           }}>
-          Recommended Topics
+          <Text style={{color: '#fff', fontSize: 28, paddingHorizontal: 18}}>
+            Hello,
+          </Text>
+          <View style={{marginRight: 22}}>
+            <Image
+              source={require('./assets/profile.jpeg')}
+              style={style.image}
+            />
+          </View>
+        </View>
+        <Text style={{color: '#fff', fontSize: 20, paddingHorizontal: 18}}>
+          Good morning
         </Text>
-        <Text
-          style={{
-            color: '#136deb',
-            fontSize: 16,
-            paddingRight: 10,
-            paddingTop: 14,
-          }}>
-          See all
-        </Text>
-      </View>
-      <View>
+        <View style={style.secondContainer}>
+          <Text
+            style={{
+              color: '#000',
+              fontSize: 20,
+              fontWeight: '600',
+              paddingTop: 15,
+              paddingLeft: 15,
+            }}>
+            Your Performance
+          </Text>
+          <Text
+            style={{
+              color: '#000',
+              fontSize: 16,
+              paddingLeft: 15,
+              shadowOpacity: 0.5,
+              elevation: 2,
+            }}>
+            Total number of sessions given: 8
+          </Text>
+          <FlatList
+            data={SubjectPerformance}
+            renderItem={renderItem}
+            keyExtractor={item => item.label}
+            horizontal
+            style={style.listSize}
+          />
+        </View>
+        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+          <Text
+            style={{
+              color: 'black',
+              fontSize: 21,
+              fontWeight: 'bold',
+              paddingTop: 13,
+              paddingBottom: 7,
+              paddingLeft: 10,
+            }}>
+            Recommended Topics
+          </Text>
+          <Text
+            style={{
+              color: '#136deb',
+              fontSize: 16,
+              paddingRight: 10,
+              paddingTop: 14,
+            }}>
+            See all
+          </Text>
+        </View>
+        <View>
+          <FlatList
+            ///showsHorizontalScrollIndicator={false}
+            data={Data}
+            renderItem={({item}) => <SubjectData detail={item} />}
+            horizontal
+          />
+        </View>
+        <View>
+          <Text
+            style={{
+              color: '#000',
+              fontWeight: 'bold',
+              fontSize: 20,
+              paddingTop: 12,
+              paddingBottom: 10,
+              paddingLeft: 10,
+            }}>
+            Subjectwise Performance
+          </Text>
+        </View>
         <FlatList
-          ///showsHorizontalScrollIndicator={false}
-          data={Data}
-          renderItem={({item}) => <SubjectData detail={item} />}
-          horizontal
-        />
-      </View>
-      <View>
-        <Text style={{color: '#000', fontWeight: 'bold', fontSize: 20}}>
-          Subjectwise Performance
-        </Text>
-        <FlatList
-          data={SubjectPerformance}
+          data={barData}
           renderItem={renderItem2}
           keyExtractor={item => item.label}
         />
       </View>
-    </ImageBackground>
+    </ScrollView>
   );
 };
 
@@ -266,20 +318,37 @@ const style = StyleSheet.create({
     borderRadius: 25,
   },
   backgroundImage: {
-    flex: 1,
+    height: 180,
+    width: '100%',
+    borderBottomLeftRadius: 45,
+    borderBottomRightRadius: 45,
+    position: 'absolute',
+    shadowOpacity: 1,
+    shadowOffset: {width: 0, height: 0},
+    shadowRadius: 5,
+    shadowColor: '#0575e6',
   },
   secondContainer: {
-    height: 200,
+    height: 180,
     width: '94%',
     borderRadius: 20,
     alignSelf: 'center',
     backgroundColor: '#fff',
-    marginTop: 25,
+    marginTop: 18,
     borderBottomRightRadius: 20,
     borderBottomLeftRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+
+    elevation: 5,
   },
   labeldata: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#000',
     textAlign: 'center',
   },
@@ -287,59 +356,29 @@ const style = StyleSheet.create({
     fontSize: 14,
     color: '#000',
     textAlign: 'center',
-  },
-  piedata: {
-    height: 35,
-    width: 35,
+    alignSelf: 'center',
   },
   middleContainer: {
     height: 140,
     width: 140,
   },
-});
-/*<SafeAreaView style={{backgroundColor: '#fff', flex: 1}}>
-      <View underlayColor="#1076e3" style={styles.TopContainer}>
-        <View style={styles.textimg}>
-          <Text style={styles.firsttext}>Hello</Text>
-          <Text style={styles.secondtext}>Good morning</Text>
-          <Image
-            source={require('./assets/profile.jpeg')}
-            style={styles.profile}
-          />
-        </View>
-      </View>
-</SafeAreaView>
-const MyFlatList = () => {
-  const data = [
-    { id: '1', text: 'Item 1', backgroundColor: 'red' },
-    { id: '2', text: 'Item 2', backgroundColor: 'green' },
-    { id: '3', text: 'Item 3', backgroundColor: 'blue' },
-    // Add more items with different background colors as needed
-  ];
-
-  const renderItem = ({ item }) => (
-    <View style={[styles.item, { backgroundColor: item.backgroundColor }]}>
-      {/* Render your item content here 
-    </View>
-  );
-
-  return (
-    <FlatList
-      data={data}
-      renderItem={renderItem}
-      keyExtractor={(item) => item.id}
-    />
-  );
-};
-
-const styles = StyleSheet.create({
-  item: {
-    padding: 20,
-    marginVertical: 8,
-    marginHorizontal: 16,
-    borderRadius: 8,
+  listSize: {
+    height: 35,
+    width: '94%',
+  },
+  pieChartContainer: {
+    width: 120,
+    height: 80,
+    alignItems: 'center',
+  },
+  PieData: {
+    height: 80,
+    width: 80,
+    alignItems: 'center',
+  },
+  barChartContainer: {
+    height: 220, // Adjust the height as needed
+    width: '100%',
+    marginBottom: 30, // Increase the bottom margin
   },
 });
-
-export default MyFlatList;
-*/

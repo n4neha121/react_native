@@ -23,12 +23,9 @@ const LoginScreen = ({navigation}) => {
             alignItems: 'center',
             paddingTop: 5,
           }}>
-          <Image
-            source={require('./assets/loginimg.jpeg')}
-            style={styles.img}
-          />
+          <Image source={require('./assets/LOGIN.png')} style={styles.img} />
         </View>
-        <View style={{paddingTop: 20}}>
+        <View style={{paddingTop: 5}}>
           <Text
             style={{
               color: '#0b1e52',
@@ -42,7 +39,9 @@ const LoginScreen = ({navigation}) => {
         <View style={{marginTop: 20}}>
           <View style={styles.inputContainer}>
             <Text style={{color: '#a5a5a5', fontSize: 18}}>Email</Text>
-            <TextInput style={styles.input} />
+            <View style={{marginTop: 25}}>
+              <TextInput style={styles.input} />
+            </View>
           </View>
           <View style={styles.inputContainer}>
             <Icon
@@ -51,7 +50,14 @@ const LoginScreen = ({navigation}) => {
               size={22}
               style={{left: 280}}
             />
-            <Text style={{color: '#a5a5a5', fontSize: 18, right: 12}}>
+            <Text
+              style={{
+                color: '#000',
+                fontSize: 18,
+                right: 18,
+                textShadowColor: 'rgba(0, 0, 0, 0.75)',
+                textShadowOffset: {width: -1, height: 1},
+              }}>
               Password
             </Text>
             <TextInput style={styles.input} secureTextEntry={true} />
@@ -72,7 +78,7 @@ const LoginScreen = ({navigation}) => {
           <TouchableOpacity
             onPress={() => navigation.navigate('Dashboard')}
             style={styles.button}>
-            <Text style={styles.buttext}>Log In</Text>
+            <Text style={styles.buttext}>Log in</Text>
           </TouchableOpacity>
         </View>
         <View
@@ -111,6 +117,7 @@ const styles = StyleSheet.create({
     padding: 10, // Adjust padding as needed
     flex: 1,
     fontSize: 18,
+    marginTop: 0,
   },
   button: {
     backgroundColor: '#0274ed',
@@ -120,8 +127,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttext: {
-    fontSize: 22,
-    fontWeight: '600',
+    fontSize: 20,
+    fontWeight: '400',
     alignSelf: 'center',
     textAlign: 'center',
     color: '#fff',
@@ -181,8 +188,8 @@ const styles = StyleSheet.create({
   },
   img: {
     alignItems: 'center',
-    height: 250,
-    width: '80%',
+    height: 290,
+    width: '90%',
     marginTop: 5,
   },
 });
