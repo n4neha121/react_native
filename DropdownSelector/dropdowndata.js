@@ -1,15 +1,16 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, ScrollView, Image} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import axios from 'axios';
+
 const ProductDropdown = () => {
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(null);
+  const [open, setOpen] = useState(true);
+  const [selectedProduct, setSelectedProduct] = useState(null); // Store the selected product
   const [products, setProducts] = useState([]);
+
   useEffect(() => {
-    // Fetch product data from the server using Axios
     axios
-      .get('https://dummyjson.com/products') // Replace with your API URL
+      .get('https://dummyjson.com/products')
       .then(response => {
         console.log('Products:', response?.data?.products);
         setProducts(response.data.products);
@@ -23,56 +24,79 @@ const ProductDropdown = () => {
     <View style={styles.container}>
       <DropDownPicker
         open={open}
-        value={value}
-        items={products.map(item => ({
-          label: item.title,
-          value: item,
+        value={selectedProduct} // Use selectedProduct as the value
+        items={products.map(product => ({
+          label: product.title, // Use product titles as dropdown labels
+          value: product, // Store the entire product object
         }))}
         placeholder="Categories"
         style={{maxHeight: 50}}
         setOpen={setOpen}
-        setValue={setValue}
+        setValue={setSelectedProduct}
         setItems={() => {}}
       />
-      {value && (
-        <View style={styles.productDetails}>
-          <Text style={styles.textcolor}>
-            Product Id: {value.id}
-            {'\n'}{' '}
-          </Text>
-          <Text style={styles.textcolor}>
-            Product Name: {value.title}
-            {'\n'}{' '}
-          </Text>
-          <Text style={styles.textcolor}>
-            Description: {value.description}
-            {'\n'}{' '}
-          </Text>
-          <Text style={styles.textcolor}>
-            Price: {value.price}
-            {'\n'}{' '}
-          </Text>
-          <Text style={styles.textcolor}>
-            Discount Percentage: {value.discountPercentage}
-            {'\n'}{' '}
-          </Text>
-          <Text style={styles.textcolor}>
-            Rating: {value.rating}
-            {'\n'}{' '}
-          </Text>
-          <Text style={styles.textcolor}>
-            Brand: {value.brand}
-            {'\n'}{' '}
-          </Text>
-          <Text style={styles.textcolor}>
-            Category: {value.category}
-            {'\n'}{' '}
-          </Text>
-          <Text style={styles.textcolor}>
-            Thumbnail: {value.thumbnail}
-            {'\n'}{' '}
-          </Text>
-        </View>
+      {selectedProduct && ( // Display product details if a product is selected
+        <ScrollView>
+          <View style={styles.productDetails}>
+            <View style={{flexDirection: 'row'}}>
+              <Image
+                source={{uri: selectedProduct.thumbnail}}
+                style={{
+                  width: 100,
+                  height: 100,
+                  marginTop: 10,
+                  marginRight: 5,
+                }}
+              />
+              <View style={{paddingTop: 15}}>
+                <Text style={styles.textcolor}>
+                  Product Name: {selectedProduct.title}
+                </Text>
+                <Text style={styles.textcolor}>
+                  Description: {selectedProduct.description}
+                </Text>
+                <View style={{flexDirection: 'row'}}>
+                  <Text style={styles.textcolor}>Price:</Text>
+                  <Text style={styles.bold}> {selectedProduct.price}</Text>
+                </View>
+                <Text style={styles.textcolor}>
+                  Discount Percentage: {selectedProduct.discountPercentage}
+                </Text>
+                <Text style={styles.textcolor}>
+                  Rating: {selectedProduct.rating}
+                </Text>
+                <Text style={styles.textcolor}>
+                  Brand: {selectedProduct.brand}
+                </Text>
+                <Text style={styles.textcolor}>
+                  Category: {selectedProduct.category}
+                </Text>
+                <Text style={styles.textcolor}>
+                  Thumbnail: {selectedProduct.thumbnail}
+                </Text>
+                <Text style={styles.textcolor}>Images:</Text>
+                <View style={{flexDirection: 'row'}}>
+                  <ScrollView horizontal={true}>
+                    {selectedProduct.images.map((image, index) => (
+                      <Image
+                        key={index}
+                        source={{uri: image}}
+                        style={{
+                          width: 100,
+                          height: 100,
+                          marginTop: 10,
+                          marginRight: 10,
+                          borderColor: '#000',
+                          borderWidth: 1,
+                        }}
+                      />
+                    ))}
+                  </ScrollView>
+                </View>
+              </View>
+            </View>
+          </View>
+        </ScrollView>
       )}
     </View>
   );
@@ -82,20 +106,24 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 16,
     paddingTop: 100,
+    flex: 1,
   },
   textcolor: {
     color: '#000',
     fontSize: 16,
+    marginBottom: 8,
   },
   productDetails: {
-    marginTop: 16,
+    borderBottomWidth: 2,
+    borderColor: 'gray',
+    paddingBottom: 16,
   },
+  bold: {color: '#000', fontSize: 16, marginBottom: 8, fontWeight: 'bold'},
 });
 
 export default ProductDropdown;
 
-{
-  /*import React, {useState} from 'react';
+/*import React, {useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 
@@ -177,4 +205,3 @@ const styles = StyleSheet.create({
 });
 
 export default ProductDropdown;*/
-}
