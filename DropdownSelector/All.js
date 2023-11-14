@@ -489,3 +489,523 @@ const styles = StyleSheet.create({
 });
 
 export default ProductDropdown;
+///////////////////////////////////////////////
+import React, {useState, useEffect} from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+} from 'react-native';
+import axios from 'axios';
+
+const ProductSearch = () => {
+  const [searchText, setSearchText] = useState('');
+  const [products, setProducts] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('All');
+
+  useEffect(() => {
+    // Fetch products from the API
+    axios
+      .get('https://dummyjson.com/products')
+      .then(response => {
+        setProducts(response.data.products);
+      })
+      .catch(error => {
+        console.error('Error fetching product data:', error);
+      });
+  }, []);
+
+  const handleCategoryClick = category => {
+    setSelectedCategory(category);
+  };
+
+  return (
+    <View style={styles.container}>
+      <TextInput
+        style={styles.input}
+        placeholder="Search Products"
+        value={searchText}
+        onChangeText={text => setSearchText(text)}
+      />
+      <ScrollView>
+        {selectedCategory === 'All'
+          ? products
+          : products
+              .filter(
+                product =>
+                  product.category.toLowerCase() ===
+                  selectedCategory.toLowerCase(),
+              )
+              .filter(product => {
+                const lowercaseSearchText = searchText.toLowerCase();
+                const lowercaseCategory = product.category.toLowerCase();
+                const lowercaseTitle = product.title.toLowerCase();
+                return (
+                  lowercaseCategory.includes(lowercaseSearchText) ||
+                  lowercaseTitle.includes(lowercaseSearchText)
+                );
+              })
+              .map(product => (
+                <TouchableOpacity key={product.id} style={styles.product}>
+                  <Text>{product.title}</Text>
+                  <Text>{product.category}</Text>
+                  {/ Add more product information here /}
+                </TouchableOpacity>
+              ))}
+      </ScrollView>
+      <View style={styles.categories}>
+        <Text
+          style={
+            selectedCategory === 'All'
+              ? styles.selectedCategory
+              : styles.category
+          }
+          onPress={() => handleCategoryClick('All')}>
+          All
+        </Text>
+        {/ Add more category options here /}
+      </View>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: 'white',
+    flex: 1,
+    padding: 10,
+  },
+  input: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 10,
+    padding: 10,
+  },
+  product: {
+    borderBottomWidth: 2,
+    borderColor: 'gray',
+    paddingBottom: 16,
+    marginBottom: 10,
+  },
+  categories: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: 10,
+  },
+  category: {
+    color: 'gray',
+  },
+  selectedCategory: {
+    color: 'black',
+    fontWeight: 'bold',
+  },
+});
+
+export default ProductSearch;
+
+
+
+
+
+import React, {useState, useEffect} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Image,
+  TextInput,
+} from 'react-native';
+import axios from 'axios';
+
+const ProductDropdown = () => {
+  const [searchText, setSearchText] = useState('');
+  const [category, setCategory] = useState(''); // Add category state
+  const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+
+  // Fetch data only when a search is performed
+  useEffect(() => {
+    if (searchText || category) {
+      axios
+        .get('https://dummyjson.com/products')
+        .then(response => {
+          console.log('Products:', response?.data?.products);
+          setProducts(response.data.products);
+        })
+        .catch(error => {
+          console.error('Error fetching product data:', error);
+        });
+    }
+  }, [searchText, category]);
+
+  // Update filteredProducts when searchText or category changes
+  useEffect(() => {
+    const filtered = products.filter(
+      product =>
+        (category === 'all' ||
+          product.category.toLowerCase().includes(category.toLowerCase())) &&
+        (searchText === '' ||
+          product.title.toLowerCase().includes(searchText.toLowerCase())),
+    );
+    setFilteredProducts(filtered);
+  }, [searchText, category, products]);
+
+  return (
+    <View style={styles.container}>
+      <TextInput
+        style={styles.input}
+        placeholder="Search by Category"
+        onChangeText={text => setCategory(text)}
+        value={category}
+        placeholderTextColor="gray"
+      />
+      <ScrollView>
+        {filteredProducts.map(product => (
+          <View style={styles.productDetails} key={product.id}>
+            <View style={{flexDirection: 'row'}}>
+              <Image
+                source={{uri: product.thumbnail}}
+                style={{
+                  width: 100,
+                  height: 100,
+                  marginTop: 10,
+                  marginRight: 5,
+                }}
+              />
+              <View style={{paddingTop: 15}}>
+                <Text style={styles.textcolor}>
+                  Product Name: {product.title}
+                </Text>
+                <Text style={styles.textcolor}>
+                  Description: {product.description}
+                </Text>
+                <View style={{flexDirection: 'row'}}>
+                  <Text style={styles.textcolor}>Price: </Text>
+                  <Text style={styles.bold}> {product.price}</Text>
+                </View>
+                <Text style={styles.textcolor}>
+                  Discount Percentage: {product.discountPercentage}
+                </Text>
+                <Text style={styles.textcolor}>Rating: {product.rating}</Text>
+                <Text style={styles.textcolor}>Brand: {product.brand}</Text>
+                <Text style={styles.textcolor}>
+                  Category: {product.category}
+                </Text>
+                <Text style={styles.textcolor}>
+                  Thumbnail: {product.thumbnail}
+                </Text>
+                <Text style={styles.textcolor}>Images:</Text>
+                <View style={{flexDirection: 'row'}}>
+                  <ScrollView horizontal={true}>
+                    {product.images.map((image, index) => (
+                      <Image
+                        source={{uri: image}}
+                        style={{
+                          width: 100,
+                          height: 100,
+                          marginTop: 10,
+                          marginRight: 10,
+                          borderColor: '#000',
+                          borderWidth: 1,
+                        }}
+                        key={index}
+                      />
+                    ))}
+                  </ScrollView>
+                </View>
+              </View>
+            </View>
+          </View>
+        ))}
+      </ScrollView>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    paddingHorizontal: 16,
+    paddingTop: 50,
+    flex: 1,
+  },
+  input: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 16,
+    paddingHorizontal: 10,
+    backgroundColor: '#fff',
+    color: 'gray',
+  },
+  productDetails: {
+    borderBottomWidth: 2,
+    borderColor: 'gray',
+    paddingBottom: 16,
+  },
+  bold: {color: '#000', fontSize: 16, marginBottom: 8, fontWeight: 'bold'},
+  textcolor: {color: '#000'}, // Add this style definition
+});
+
+export default ProductDropdown;
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import React, {useState, useEffect} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Image,
+  TextInput,
+} from 'react-native';
+
+import axios from 'axios';
+
+const ProductDropdown = () => {
+  const [searchText, setSearchText] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get('https://dummyjson.com/products')
+      .then(response => {
+        console.log('Products:', response?.data?.products);
+        setProducts(response.data.products);
+
+        const uniqueCategories = [
+          'all',
+          ...new Set(response.data.products.map(product => product.category)),
+        ];
+        setCategories(uniqueCategories);
+      })
+      .catch(error => {
+        console.error('Error fetching product data:', error);
+      });
+  }, []);
+
+  useEffect(() => {
+    const filtered = products.filter(
+      product =>
+        (selectedCategory === 'all' ||
+          product.category
+            .toLowerCase()
+            .includes(selectedCategory.toLowerCase())) &&
+        (searchText === '' ||
+          product.title.toLowerCase().includes(searchText.toLowerCase())),
+    );
+    setFilteredProducts(filtered);
+  }, [searchText, selectedCategory, products]);
+
+  const handleCategoryClick = category => {
+    setSelectedCategory(category);
+  };
+
+  return (
+    <View style={styles.container}>
+      <TextInput
+        style={styles.input}
+        placeholder="Search by Product Title"
+        onChangeText={text => setSearchText(text)}
+        value={searchText}
+        placeholderTextColor="gray"
+      />
+
+      <ScrollView>
+        {categories.map((category, index) => (
+          <Text
+            key={index}
+            style={styles.categoryText}
+            onPress={() => handleCategoryClick(category)} // Add this onPress handler
+          >
+            {category}
+          </Text>
+        ))}
+      </ScrollView>
+
+      <ScrollView>s
+        {filteredProducts.map(product => (
+          <View style={styles.productDetails} key={product.id}>
+            <View style={{flexDirection: 'row'}}>
+              <Image
+                source={{uri: product.thumbnail}}
+                style={{
+                  width: 100,
+                  height: 100,
+                  marginTop: 10,
+                  marginRight: 5,
+                }}
+              />
+              <View style={{paddingTop: 15}}>
+                <Text style={styles.textcolor}>
+                  Product Name: {product.title}
+                </Text>
+                <Text style={styles.textcolor}>
+                  Description: {product.description}
+                </Text>
+                <View style={{flexDirection: 'row'}}>
+                  <Text style={styles.textcolor}>Price: </Text>
+                  <Text style={styles.bold}> {product.price}</Text>
+                </View>
+                <Text style={styles.textcolor}>
+                  Discount Percentage: {product.discountPercentage}
+                </Text>
+                <Text style={styles.textcolor}>Rating: {product.rating}</Text>
+                <Text style={styles.textcolor}>Brand: {product.brand}</Text>
+                <Text style={styles.textcolor}>
+                  Category: {product.category}
+                </Text>
+                <Text style={styles.textcolor}>
+                  Thumbnail: {product.thumbnail}
+                </Text>
+                <Text style={styles.textcolor}>Images:</Text>
+                <View style={{flexDirection: 'row'}}>
+                  <ScrollView horizontal={true}>
+                    {product.images.map((image, index) => (
+                      <Image
+                        source={{uri: image}}
+                        style={{
+                          width: 100,
+                          height: 100,
+                          marginTop: 10,
+                          marginRight: 10,
+                          borderColor: '#000',
+                          borderWidth: 1,
+                        }}
+                        key={index}
+                      />
+                    ))}
+                  </ScrollView>
+                </View>
+              </View>
+            </View>
+          </View>
+        ))}
+      </ScrollView>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    paddingHorizontal: 16,
+    paddingTop: 50,
+    flex: 1,
+  },
+  input: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 16,
+    paddingHorizontal: 10,
+    backgroundColor: '#fff',
+    color: 'gray',
+  },
+  categoryText: {
+    padding: 10,
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    marginRight: 5,
+    color: '#000',
+  },
+  productDetails: {
+    borderBottomWidth: 2,
+    borderColor: 'gray',
+    paddingBottom: 16,
+  },
+  bold: {color: '#000', fontSize: 16, marginBottom: 8, fontWeight: 'bold'},
+  textcolor: {color: '#000'},
+});
+
+export default ProductDropdown;
+//////////////////////////////////
+return (
+    <View style={styles.container}>
+      <TextInput
+        style={styles.input}
+        placeholder="Search by Product Title"
+        onChangeText={text => setSearchText(text)}
+        value={searchText}
+        placeholderTextColor="gray"
+      />
+
+      <ScrollView>
+        {categories.map((category, index) => (
+          <Text
+            key={index}
+            style={styles.categoryText}
+            onPress={() => handleCategoryClick(category)} // Add this onPress handler
+          >
+            {category}
+          </Text>
+        ))}
+      </ScrollView>
+
+      <ScrollView>
+        {filteredProducts.map(product => (
+          <View style={styles.productDetails} key={product.id}>
+            <View style={{flexDirection: 'row'}}>
+              <Image
+                source={{uri: product.thumbnail}}
+                style={{
+                  width: 100,
+                  height: 100,
+                  marginTop: 10,
+                  marginRight: 5,
+                }}
+              />
+              <View style={{paddingTop: 15}}>
+                <Text style={styles.textcolor}>
+                  Product Name: {product.title}
+                </Text>
+                <Text style={styles.textcolor}>
+                  Description: {product.description}
+                </Text>
+                <View style={{flexDirection: 'row'}}>
+                  <Text style={styles.textcolor}>Price: </Text>
+                  <Text style={styles.bold}> {product.price}</Text>
+                </View>
+                <Text style={styles.textcolor}>
+                  Discount Percentage: {product.discountPercentage}
+                </Text>
+                <Text style={styles.textcolor}>Rating: {product.rating}</Text>
+                <Text style={styles.textcolor}>Brand: {product.brand}</Text>
+                <Text style={styles.textcolor}>
+                  Category: {product.category}
+                </Text>
+                <Text style={styles.textcolor}>
+                  Thumbnail: {product.thumbnail}
+                </Text>
+                <Text style={styles.textcolor}>Images:</Text>
+                <View style={{flexDirection: 'row'}}>
+                  <ScrollView horizontal={true}>
+                    {product.images.map((image, index) => (
+                      <Image
+                        source={{uri: image}}
+                        style={{
+                          width: 100,
+                          height: 100,
+                          marginTop: 10,
+                          marginRight: 10,
+                          borderColor: '#000',
+                          borderWidth: 1,
+                        }}
+                        key={index}
+                      />
+                    ))}
+                  </ScrollView>
+                </View>
+              </View>
+            </View>
+          </View>
+        ))}
+      </ScrollView>
+    </View>
+  );

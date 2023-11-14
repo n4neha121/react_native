@@ -1,89 +1,137 @@
-// ProductDetailScreen.js
+import React, {useState, useEffect} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Image,
+  TextInput,
+} from 'react-native';
+import axios from 'axios';
 
-import React from 'react';
-import {View, Text, Image, StyleSheet, ScrollView} from 'react-native';
+const ProductDropdown = () => {
+  const [searchText, setSearchText] = useState(''); //useeffect for searching products
+  const [selectedCategory, setSelectedCategory] = useState('all'); //for displaying all data
+  const [categories, setCategories] = useState([]); //for the categories selection
+  const [products, setProducts] = useState([]); // to display all products
+  const [filteredProducts, setFilteredProducts] = useState([]); // for filtering products
 
-const ProductDetailScreen = ({route}) => {
-  const {product} = route.params;
+  useEffect(() => {
+    axios
+      .get('https://dummyjson.com/products')
+      .then(response => {
+        console.log('Products:', response?.data?.products);
+        setProducts(response.data.products);
+      }) //api call to fetch data
+      .catch(error => {
+        console.error('Error fetching product data:', error);
+      });
+  }, []);
+
+  useEffect(() => {
+    const filtered = products.filter(
+      (
+        product, //in this logic the products are being filtered here bcz each data will be filtered // here in this the selected category have fixed in to the all where all the products data will be visible //based on product category the data will be visible
+      ) =>
+        ((selectedCategory === 'all' ||
+          product.category
+            .toLowerCase() //also can search with lowercase then also the data would be visible
+            .includes(selectedCategory.toLowerCase())) &&
+          (searchText === '' || //in search text the product name will be searched then only that product data will get display in the screen also can search in lowercase also
+            product.title.toLowerCase().includes(searchText.toLowerCase()))) ||
+        searchText === '' || //in search text the product name will be searched then only that product data will get display in the screen also can search in lowercase also
+        product.category.toLowerCase().includes(searchText.toLowerCase()),
+    );
+    setFilteredProducts(filtered); //filtered component to filter data of products
+  }, [searchText, selectedCategory, products]);
+
+  const handleCategoryClick = category => {
+    setSelectedCategory(category); //component for category select
+  };
 
   return (
     <View style={styles.container}>
+      <TextInput
+        style={styles.input}
+        placeholder="Search Products"
+        onChangeText={text => setSearchText(text)}
+        value={searchText}
+        placeholderTextColor="gray"
+      />
       <ScrollView>
-        <Image source={{uri: product.thumbnail}} style={styles.image} />
-        <Text style={styles.title}>{product.title}</Text>
-        <View style={{flexDirection: 'row'}}>
-          <Text style={styles.price1}>Price: </Text>
-          <Text style={styles.price}> ${product.price}</Text>
-        </View>
-        <Text style={styles.text}>Ratings:{product.rating}</Text>
-        <Text style={styles.text}>Discount: {product.discountPercentage}%</Text>
-        <Text style={styles.text}> Brand: {product.brand}</Text>
-        <Text style={styles.text}> Category: {product.category}</Text>
-        <Text style={styles.description}>
-          description: {product.description}
-        </Text>
-        <ScrollView horizontal={true}>
-          {product.images.map((image, index) => (
-            <Image
-              key={index}
-              source={{uri: image}}
-              style={{
-                width: 100,
-                height: 100,
-                marginTop: 10,
-                marginRight: 10,
-                borderColor: '#000',
-                borderWidth: 1,
-                alignItems: 'center',
-                justifyContent: 'center',
-                alignSelf: 'center',
-              }}
-            />
-          ))}
-        </ScrollView>
-        <Text> {'\n'} </Text>
+        {categories.map((category, index) => (
+          <Text
+            key={index}
+            style={styles.categoryText}
+            onPress={() => handleCategoryClick(category)} // Add this onPress handler
+          >
+            {category}
+          </Text>
+        ))}
+      </ScrollView>
+
+      <ScrollView>
+        {filteredProducts.map(product => (
+          <View style={styles.productDetails} key={product.id}>
+            <View style={{flexDirection: 'row'}}>
+              <Image
+                source={{uri: product.thumbnail}}
+                style={{
+                  width: 100,
+                  height: 100,
+                  marginTop: 10,
+                  marginRight: 5,
+                }}
+              />
+              <View style={{paddingTop: 15}}>
+                <Text style={styles.textcolor}>
+                  Product Name: {product.title}
+                </Text>
+                <Text style={styles.textcolor}>
+                  Description: {product.description}
+                </Text>
+                <View style={{flexDirection: 'row'}}>
+                  <Text style={styles.textcolor}>Price: </Text>
+                  <Text style={styles.bold}> {product.price}</Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        ))}
       </ScrollView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  textcolor: {
+    color: '#000',
+    fontSize: 16,
+    marginBottom: 8,
+  },
+  productDetails: {
+    borderBottomWidth: 2,
+    borderColor: 'gray',
+    paddingBottom: 16,
+  },
+  bold: {color: '#000', fontSize: 16, marginBottom: 8, fontWeight: 'bold'},
+  input: {
+    marginBottom: 10,
+    padding: 10,
+    borderColor: 'gray',
+    borderWidth: 1,
+    color: 'gray',
+  },
   container: {
-    flex: 1,
+    padding: 10,
   },
-  image: {
-    width: 300,
-    height: 300,
-    alignItems: 'center',
-    alignSelf: 'center',
-    marginTop: 22,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginVertical: 10,
-    color: '#000',
-  },
-  description: {
-    fontSize: 18,
-    marginHorizontal: 20,
-    color: '#000',
-  },
-  price: {
-    fontSize: 18,
-    marginVertical: 10,
-    color: 'darkgreen',
-  },
-  price1: {
-    fontSize: 18,
-    marginVertical: 10,
-    color: 'black',
-  },
-  text: {
-    color: '#000',
-    fontSize: 18,
-    marginVertical: 10,
+  categoryText: {
+    color: 'blue',
+    fontSize: 16,
+    marginBottom: 8,
+    textDecorationLine: 'underline',
   },
 });
 
-export default ProductDetailScreen;
+export default ProductDropdown;
+//why categories categories are not getting filtered in textinput and not displaying
